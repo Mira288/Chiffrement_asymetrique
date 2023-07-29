@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool estPremier(int c);
+int pgcd(int x, int y);
+void bezout(int a, int b, int *x, int *y);
+
+int main () {
+    int a, b, n, m, e, x, y, d, message;
+    float chiffrer, dechiffrer;
+
+    printf ("Entrer votre premier nombre \n");
+    scanf ("%d", &a);
+    printf ("Entrer votre deuxieme nombre \n");
+    scanf ("%d", &b);
+    
+    printf("%d est %s\n", a, estPremier(a) ? "premier" : "non premier");
+    printf("%d est %s\n", b, estPremier(b) ? "premier" : "non premier");
+
+    while (estPremier(a) == false && estPremier(b) == false)
+    {
+        printf("Vous ne pouvez pas continuer, vos nombres ne sont pas premiers.\n");
+        printf("Entrez un nouveau premier nombre: ");
+        scanf("%d", &a);
+        printf("Entrez un nouveau deuxième nombre: ");
+        scanf("%d", &b);
+    }
+
+
+    if (estPremier(a) ==true && estPremier(b) ==true)
+    {
+        n = a * b;
+        m = (a-1) * (b-1);
+    }
+    
+    printf("Entrez votre second element constituant votre clé publique\n");
+    scanf ("%d", &e);
+    if (estPremier (e)== false)
+    {
+        printf("Votre nombre n'est pas premier\n");
+    }
+    else
+    {
+        printf("%d\n", n);
+        printf("%d\n", m);
+        printf ("%d\n", pgcd(m, e));
+        bezout(e, m, &x, &y);
+    
+        printf("Coefficients de Bezout pour %d et %d : x = %d, y = %d\n", e, m, x, y);
+        printf("%d\n", y);
+        d = m / y;
+        printf("%d\n", d);
+        while (d<0)
+        {
+            d = d+ m;
+        }
+        printf("%d\n", d);
+        printf("Votre cle prive est %d , %d\n", n,e ); 
+        printf("Votre cle publique est %d , %d\n", n,d );
+    }
+    
+    printf("Entrer votre message à chiffrer\n");
+    scanf("%d", &message);
+    chiffrer = pow((double)message , (double)e);
+
+    while (chiffrer >n)
+    {
+        chiffrer -= n;
+    }
+    printf("Votre message chiffrer est %f", chiffrer);
+    
+    dechiffrer = pow((double)message , (double)d);
+
+    while (dechiffrer >n)
+    {
+        dechiffrer -= n;
+    }
+    printf("Votre message dechiffrer est %f", dechiffrer);
+    
+
+   
+    return 0;
+}
+
+bool estPremier(int c)
+{
+    int i = 2;
+    while (i <= c/2)
+    {
+        if (c % i == 0)
+        {
+            return false;
+        }
+        i++;
+    } 
+    return true;
+}
+
+int pgcd(int x, int y) {
+    int r;
+    while (y != 0) {
+        r = x % y;
+        x = y;
+        y = r;
+    }
+    return x;
+}
+
+void bezout(int a, int b, int *x, int *y)
+{
+    int u = 1, v = 0, q, r, m, n;
+    *x = 0, *y = 1;
+    
+    while (a != 0) {
+        q = b / a;
+        r = b % a;
+        m = *x - u * q;
+        n = *y - v * q;
+        b = a, a = r;
+        *x = u, u = m;
+        *y = v, v = n;
+    }
+    
+    *x = u;
+    *y = v;
+}
